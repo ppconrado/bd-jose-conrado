@@ -34,8 +34,9 @@ public class Cliente implements Serializable {
 	private String cpfOuCnpj;
 	private Integer tipo;
 	
+	//////////////// ASSOCIACOES ////////////////////////////////////////
 	
-	// UM cliente TEM VARIOS enderecos
+	// UM cliente TEM VARIOS enderecos - OneToMany
 	
 	@JsonManagedReference // Proteger contra serializacao ciclica
 	@OneToMany(mappedBy = "cliente")
@@ -43,6 +44,7 @@ public class Cliente implements Serializable {
 	
 	
 	///////////// ENTIDADE FRACA (WEAK- NAO TEM ID) - TELEFONES ////////
+	
 	// UM cliente TEM VARIOS telefones
 	// Lista de telefones <STRING>
 	// Colecao (Conjunto) de strings (telefone) associados ao clientes
@@ -52,8 +54,12 @@ public class Cliente implements Serializable {
 	@ElementCollection
 	@CollectionTable(name = "TELEFONE")
 	private Set<String> telefones = new HashSet<>();
+	
+	// ASSOCIACAO - CLIENTE <-> PEDIDO
 
-	// private List<Pedido> pedidos = new ArrayList<>();
+	// Um Cliente TEM VARIOS Pedidos
+	@OneToMany(mappedBy = "cliente")
+	private List<Pedido> pedidos = new ArrayList<>();
 	
 	public Cliente() {
 		
@@ -128,6 +134,14 @@ public class Cliente implements Serializable {
 		return serialVersionUID;
 	}
 
+	public List<Pedido> getPedidos() {
+		return pedidos;
+	}
+	
+	public void setPedidos(List<Pedido> pedidos) {
+		this.pedidos = pedidos;
+	}
+	
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);
@@ -145,5 +159,4 @@ public class Cliente implements Serializable {
 		return Objects.equals(id, other.id);
 	}
 
-	
 }
