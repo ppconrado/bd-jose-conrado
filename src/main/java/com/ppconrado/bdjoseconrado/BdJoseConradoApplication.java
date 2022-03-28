@@ -9,10 +9,15 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.ppconrado.bdjoseconrado.domain.Categoria;
 import com.ppconrado.bdjoseconrado.domain.Cidade;
+import com.ppconrado.bdjoseconrado.domain.Cliente;
+import com.ppconrado.bdjoseconrado.domain.Endereco;
 import com.ppconrado.bdjoseconrado.domain.Estado;
 import com.ppconrado.bdjoseconrado.domain.Produto;
+import com.ppconrado.bdjoseconrado.domain.enums.TipoCliente;
 import com.ppconrado.bdjoseconrado.repositories.CategoriaRepository;
 import com.ppconrado.bdjoseconrado.repositories.CidadeRepository;
+import com.ppconrado.bdjoseconrado.repositories.ClienteRepository;
+import com.ppconrado.bdjoseconrado.repositories.EnderecoRepository;
 import com.ppconrado.bdjoseconrado.repositories.EstadoRepository;
 import com.ppconrado.bdjoseconrado.repositories.ProdutoRepository;
 
@@ -30,6 +35,12 @@ public class BdJoseConradoApplication implements CommandLineRunner {
 	
 	@Autowired
 	private EstadoRepository estadoRepository;
+	
+	@Autowired
+	private ClienteRepository clienteRepository;
+	
+	@Autowired
+	private EnderecoRepository enderecoRepository;
 
 	public static void main(String[] args) {
 		SpringApplication.run(BdJoseConradoApplication.class, args);
@@ -41,7 +52,7 @@ public class BdJoseConradoApplication implements CommandLineRunner {
         // ComandLineRunner vai executar esta rotina no inicio do programa		
 		
 		
-		/////////////////////// Relacao Categoria-Produto /////////////////////
+		/////////////////////// RELACAO - CATEGORIA <-> PRODUTO (ManyToMany) /////////////////////
 		
 		Categoria cat1 = new Categoria(null, "Informatica");
 		Categoria cat2 = new Categoria(null, "Escritorio");
@@ -61,7 +72,7 @@ public class BdJoseConradoApplication implements CommandLineRunner {
 		categoriaRepository.saveAll(Arrays.asList(cat1, cat2));
 		produtoRepository.saveAll(Arrays.asList(p1, p2, p3));
 		
-		//////////////////////// Relacao Estado-Cidade ////////////////////////
+		//////////////////////// RELACAO - ESTADO <-> CIDADE (ManyToOne) ////////////////////////
 		
 		Estado est1 = new Estado(null, "Minas Gerais");
 		Estado est2 = new Estado(null, "Sao Paulo");
@@ -76,6 +87,23 @@ public class BdJoseConradoApplication implements CommandLineRunner {
 		// Salva no BD atraves da camada repository (salva estado primeiro)
 		estadoRepository.saveAll(Arrays.asList(est1, est2));
 		cidadeRepository.saveAll(Arrays.asList(c1, c2, c3));
+		
+		/////////////////// RELACAO - CLIENTE <-> ENDERECO <-> 
+		
+		Cliente cli1 = new Cliente(null, "Maria Silva", "maria@gmail.com", "36378912377", TipoCliente.PESSOAFISICA);
+		
+		cli1.getTelefones().addAll(Arrays.asList("27363323", "93838393"));
+		
+		Endereco e1 = new Endereco(null, "Rua Flores", "300", "Apto 303", "Jardim", "38220834", cli1, c1);
+		Endereco e2 = new Endereco(null, "Avenida Matos", "105", "Sala 800", "Centro", "38777012", cli1, c2);
+		
+		// Lista de Enderecos do cliente 
+		cli1.getEnderecos().addAll(Arrays.asList(e1, e2));
+		
+		// Salvar o Cliente primeiro
+		
+		clienteRepository.saveAll(Arrays.asList(cli1));
+		enderecoRepository.saveAll(Arrays.asList(e1, e2));
 	}
 
 }
