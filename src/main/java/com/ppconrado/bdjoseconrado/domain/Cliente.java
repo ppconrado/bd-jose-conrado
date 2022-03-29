@@ -15,7 +15,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ppconrado.bdjoseconrado.domain.enums.TipoCliente;
 
 @Entity
@@ -38,7 +38,7 @@ public class Cliente implements Serializable {
 	
 	// UM cliente TEM VARIOS enderecos - OneToMany
 	
-	@JsonManagedReference // Proteger contra serializacao ciclica
+	
 	@OneToMany(mappedBy = "cliente")
 	private List<Endereco> enderecos = new ArrayList<>();
 	
@@ -58,6 +58,8 @@ public class Cliente implements Serializable {
 	// ASSOCIACAO - CLIENTE <-> PEDIDO
 
 	// Um Cliente TEM VARIOS Pedidos
+	
+	@JsonIgnore  // Proteger contra serializacao ciclica
 	@OneToMany(mappedBy = "cliente")
 	private List<Pedido> pedidos = new ArrayList<>();
 	
